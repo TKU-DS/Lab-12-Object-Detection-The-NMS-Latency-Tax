@@ -1,29 +1,28 @@
-# Lab 10: Interpolation Benchmarking (Cloud-to-Edge)
+# Lab 12: Object Detection & The NMS Latency Tax
 
 ## 📌 Overview
-Mathematical transformations (scaling, rotation) create non-integer coordinates. **Interpolation** is the algorithm that guesses the missing pixel values. 
+In previous labs, we focused on "Inference" speed. However, in Object Detection, the story doesn't end when the model finishes its forward pass. [cite_start]The system must then run **Non-Maximum Suppression (NMS)** to filter out thousands of redundant candidate boxes.
 
-In this lab, you will execute a benchmark on your **GitHub Virtual Machine**. While this cloud VM is much more powerful than a physical Edge device, the **relative performance gap** between algorithms remains the same. A method that is 5x slower on a cloud VM will be catastrophically slow on an Edge device. Let the data drive your engineering decisions.
+In a CPU-bound environment like GitHub Codespaces, NMS can become a significant bottleneck. [cite_start]This lab will compare the traditional YOLOv8 (with NMS) against the state-of-the-art YOLOv10 (NMS-Free).
 
 ## 🎯 Learning Objectives
-1. Understand the visual and performance trade-offs between `INTER_NEAREST`, `INTER_LINEAR`, and `INTER_CUBIC`.
-2. Use `time.perf_counter()` to measure sub-millisecond execution times rigorously in a cloud environment.
-3. Analyze the **relative complexity multiplier** of different algorithms.
+1. Profile the end-to-end latency: Pre-process vs. Inference vs. Post-process (NMS).
+2. [cite_start]Understand how the `Confidence Threshold` affects NMS computation time.
+3. [cite_start]Benchmark the performance gain of YOLOv10's NMS-Free architecture.
 
 ## 🛠️ Instructions
-1. **Prepare Environment**: 
-   Ensure you have OpenCV and NumPy installed in your GitHub Codespace: 
-   `pip install opencv-python numpy`.
-2. **Open the Script**: 
-   Open `lab10_interpolation_benchmark.py`. The script generates a 4K high-frequency test pattern dynamically to save bandwidth.
-3. **Complete the TODOs**:
-   - **TODO 1**: Resize to $224 \times 224$ using Nearest Neighbor.
-   - **TODO 2**: Resize using Bilinear.
-   - **TODO 3**: Resize using Bicubic.
-   - **TODO 4**: Compute the mean and standard deviation of the execution times using NumPy.
-4. **Execute & Analyze**: 
-   Run the script via `python lab10_interpolation_benchmark.py`.
+1. **Setup**:
+   `pip install ultralytics numpy opencv-python`
+2. **Execute**:
+   Run `python lab12_nms_benchmark.py`.
+3. **Analyze**:
+   - Observe the `Post-process` time for YOLOv8 as you change the `conf` threshold.
+   - Compare it with YOLOv10's post-processing time.
 
-## ✅ Expected Output
-1. **Console Output**: A formatted markdown table showing the Latency and the **Relative Speed Multiplier** for each method.
-2. **Visual Artifact**: A file named `benchmark_visual_comparison.png`. Zoom in to observe the aliasing (blockiness) of NEAREST versus the sharpness of CUBIC.
+## ✅ Expected Deliverable
+Submit a short report with a table showing:
+- Model Name
+- Confidence Threshold
+- Raw Inference Time (ms)
+- Post-process (NMS) Time (ms)
+- Total FPS
