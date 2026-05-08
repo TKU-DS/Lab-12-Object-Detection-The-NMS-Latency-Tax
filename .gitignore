@@ -1,13 +1,12 @@
-# Python bytecode
+# Python
 __pycache__/
 *.py[cod]
-
-# Virtual environment
-venv/
 .env
 
-# Data & Output Files (Do not commit benchmark artifacts)
+# Models & Data (Do not commit these)
+*.pt
 *.jpg
-*.jpeg
-*.png
-*.bmp
+*.mp4
+
+# OS
+.DS_Store
